@@ -13,6 +13,10 @@ on:
 env:
   ADDON_NAME: couchdb-livesync
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     name: Build ${{ matrix.arch }}
