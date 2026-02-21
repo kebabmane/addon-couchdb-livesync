@@ -1,0 +1,24 @@
+name: "CouchDB for Obsidian LiveSync"
+version: "1.0.0"
+slug: couchdb-livesync
+description: "CouchDB database configured for Obsidian LiveSync plugin synchronization"
+url: "https://github.com/kebabmane/addon-couchdb-livesync"
+arch:
+  - aarch64
+  - amd64
+init: false
+ports:
+  5984/tcp: 5984
+ports_description:
+  5984/tcp: "CouchDB HTTP API & Fauxton UI"
+map:
+  - addon_config:rw
+options:
+  username: "admin"
+  password: ""
+  database: "obsidian-livesync"
+schema:
+  username: str
+  password: password
+  database: str
+image: "ghcr.io/kebabmane/addon-couchdb-livesync/{arch}"
