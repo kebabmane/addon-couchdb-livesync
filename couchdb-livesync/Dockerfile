@@ -36,8 +36,8 @@ RUN mkdir -p /data \
 COPY rootfs /
 
 # Make scripts executable
-RUN chmod +x /etc/services.d/couchdb/run \
-    && chmod +x /etc/services.d/couchdb/finish
+RUN chmod +x /etc/s6-overlay/s6-rc.d/couchdb/run \
+    && chmod +x /etc/s6-overlay/s6-rc.d/couchdb/finish
 
 # Expose CouchDB port
 EXPOSE 5984

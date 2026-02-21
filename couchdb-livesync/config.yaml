@@ -1,5 +1,5 @@
 name: "CouchDB for Obsidian LiveSync"
-version: "1.0.0"
+version: "1.0.1"
 slug: couchdb-livesync
 description: "CouchDB database configured for Obsidian LiveSync plugin synchronization"
 url: "https://github.com/kebabmane/addon-couchdb-livesync"
