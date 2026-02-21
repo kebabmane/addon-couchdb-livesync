@@ -30,17 +30,13 @@ echo "Starting CouchDB for Obsidian LiveSync..."
 mkdir -p /data/couchdb
 chown -R couchdb:couchdb /data/couchdb
 
-# Link data directory to CouchDB default location
-if [[ ! -L /opt/couchdb/data ]]; then
-    rm -rf /opt/couchdb/data
-    ln -s /data/couchdb /opt/couchdb/data
-fi
-
 # Configure CouchDB local.ini with admin credentials and Obsidian LiveSync settings
 cat > /opt/couchdb/etc/local.d/obsidian-livesync.ini << EOF
 [couchdb]
 single_node = true
 max_document_size = 50000000
+database_dir = /data/couchdb
+view_index_dir = /data/couchdb
 
 [admins]
 ${username} = ${password}
