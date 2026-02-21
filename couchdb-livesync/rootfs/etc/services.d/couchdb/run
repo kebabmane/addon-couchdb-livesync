@@ -1,27 +1,43 @@
-#!/usr/bin/with-contenv bashio
+#!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Add-on: CouchDB for Obsidian LiveSync
 # Runs CouchDB with configuration for Obsidian LiveSync
 # ==============================================================================
 
+# Source bashio library
+source /usr/lib/bashio/bashio.sh
+
 declare username
 declare password
 declare database
 
-# Read configuration
-username=$(bashio::config 'username')
-password=$(bashio::config 'password')
-database=$(bashio::config 'database')
+# Read configuration from options.json
+if [[ -f /data/options.json ]]; then
+    username=$(bashio::config 'username')
+    password=$(bashio::config 'password')
+    database=$(bashio::config 'database')
+else
+    echo "Warning: /data/options.json not found, using defaults"
+    username="admin"
+    password="admin"
+    database="obsidian-livesync"
+fi
 
-bashio::log.info "Starting CouchDB for Obsidian LiveSync..."
+echo "Starting CouchDB for Obsidian LiveSync..."
 
-# Ensure data directory exists and has correct permissions
+# Ensure data directory exists
 mkdir -p /data/couchdb
 chown -R couchdb:couchdb /data/couchdb
 
+# Link data directory to CouchDB default location
+if [[ ! -L /opt/couchdb/data ]]; then
+    rm -rf /opt/couchdb/data
+    ln -s /data/couchdb /opt/couchdb/data
+fi
+
 # Configure CouchDB local.ini with admin credentials and Obsidian LiveSync settings
-cat > /etc/couchdb/local.ini << EOF
+cat > /opt/couchdb/etc/local.d/obsidian-livesync.ini << EOF
 [couchdb]
 single_node = true
 max_document_size = 50000000
@@ -52,11 +68,11 @@ level = info
 EOF
 
 # Set correct ownership
-chown couchdb:couchdb /etc/couchdb/local.ini
+chown couchdb:couchdb /opt/couchdb/etc/local.d/obsidian-livesync.ini
 
-bashio::log.info "CouchDB configured with user: ${username}"
-bashio::log.info "Database: ${database}"
-bashio::log.info "Listening on port 5984"
+echo "CouchDB configured with user: ${username}"
+echo "Database: ${database}"
+echo "Listening on port 5984"
 
-# Start CouchDB
-exec /usr/bin/couchdb
+# Start CouchDB (using the official entrypoint)
+exec /opt/couchdb/bin/couchdb
